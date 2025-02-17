@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
+import { loginUser, registerUser } from '../api/authApi';
 
 const AuthForm = () => {
     const [isLogin, setIsLogin] = useState(true);
@@ -9,9 +10,15 @@ const AuthForm = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate(); // React Router navigation
 
-    // API base URL
-    const BASE_URL = 'http://localhost:3000/auth/api';
+    // ✅ Check if user is already logged in
+    useEffect(() => {
+        const token = localStorage.getItem('accessToken');
+        if (token) {
+            navigate('/home'); // Redirect to home if already logged in
+        }
+    }, [navigate]);
 
     // Handle Login
     const handleLogin = async () => {
@@ -23,20 +30,13 @@ const AuthForm = () => {
         }
 
         try {
-            const response = await axios.post(`${BASE_URL}/login`, { username: email, password });
-            const { accessToken, refreshToken } = response.data;
-            if (response.status === 200) {
-                // Store tokens in localStorage
-                localStorage.setItem('accessToken', accessToken);
-                localStorage.setItem('refreshToken', refreshToken);
-
-                toast.success('Login Successful!');
-                setLoading(false);
-            }
-
-
+            await loginUser(email, password);
+            navigate('/home');
+            setEmail('');
+            setPassword('');
         } catch (err) {
-            toast.error(err.response?.data?.message || 'Something went wrong');
+            toast.error(err);
+        } finally {
             setLoading(false);
         }
     };
@@ -59,24 +59,15 @@ const AuthForm = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post(`${BASE_URL}/register`, { username: email, password });
-            // ✅ Check if the response status is 200
-            if (response.status === 201) {
-                console.log('login Success');
-                toast.success('Signup Successful! Please log in.');
-                setEmail('');
-                setPassword('');
-                setConfirmPassword('');
-                setIsLogin(true);
-            } else {
-                console.log('Something Went Wrong');
-                toast.error(response.data.message);
-            }
-
+            await registerUser(email, password);
+            toast.success('Signup Successful! Please log in.');
+            setEmail('');
+            setPassword('');
+            setConfirmPassword('');
             setIsLogin(true);
-            setLoading(false);
         } catch (err) {
-            toast.error(err.response?.data?.message || 'Something went wrong');
+            toast.error(err);
+        } finally {
             setLoading(false);
         }
     };
