@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 import { loginUser, registerUser } from '../api/authApi';
+
+import { useContext } from 'react';
+import { AuthContext } from '../AuthContext';
 
 const AuthForm = () => {
     const [isLogin, setIsLogin] = useState(true);
@@ -11,17 +14,18 @@ const AuthForm = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate(); // React Router navigation
-
+    const { login } = useContext(AuthContext);
     // ✅ Check if user is already logged in
-    useEffect(() => {
-        const token = localStorage.getItem('accessToken');
-        if (token) {
-            navigate('/home'); // Redirect to home if already logged in
-        }
-    }, [navigate]);
+    // useEffect(() => {
+    //     const token = localStorage.getItem('accessToken');
+    //     if (token) {
+    //         navigate('/'); // Redirect to home if already logged in
+    //     }
+    // }, [navigate]);
 
     // Handle Login
     const handleLogin = async () => {
+
         setLoading(true);
         if (!email || !password) {
             toast.error('Please enter email or password');
@@ -30,8 +34,9 @@ const AuthForm = () => {
         }
 
         try {
-            await loginUser(email, password);
-            navigate('/home');
+            const response = await loginUser(email, password);
+            login(response.accessToken);
+            navigate('/');
             setEmail('');
             setPassword('');
         } catch (err) {

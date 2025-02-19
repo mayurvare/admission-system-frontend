@@ -1,31 +1,46 @@
 import './App.css';
+import { AuthContext, AuthProvider } from './AuthContext';
+import Navbar from './components/Navbar/Navbar';
+import AboutUs from './pages/about';
 import AuthForm from './pages/auth';
 import Home from './pages/home';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import { useContext } from 'react';
 function App() {
   return (
-    <Router>
-      <ToastContainer />
-      <Routes>
-        <Route path="/" element={<AuthForm />} />
-        <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-    </Router>
-    // <div>
-    //   <ToastContainer />
-    //   <AuthForm />
-    // </div>
+    <AuthProvider>
+      <Router>
+        <MainLayout />
+      </Router>
+    </AuthProvider>
   );
 }
+// Component to handle layout rendering
+const MainLayout = () => {
+  const { isAuthenticated } = useContext(AuthContext);
+  const location = useLocation();
+  const hideNavbar = location.pathname === "/login"; // Hide navbar on login page
 
-// Higher Order Component to protect Home route
-const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem('accessToken');
-  return token ? <Home /> : <Navigate to="/" />;
+  return (
+    <>
+      {!hideNavbar && <Navbar />}
+      <ToastContainer />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <AuthForm />} />
+        <Route path="/about" element={<AboutUs />} />
+
+        {/* default redirect to home page */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
+  );
 };
 
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem('accessToken');
+  return token ? <Navigate to="/" /> : children;
+};
 
-export default App;  
+export default App;

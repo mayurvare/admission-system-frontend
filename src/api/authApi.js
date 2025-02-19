@@ -2,12 +2,12 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 const BASE_URL = 'http://localhost:3000/auth/api';
 
+// Signin API Call 
 export const loginUser = async (email, password) => {
     try {
+
         const response = await axios.post(`${BASE_URL}/login`, { username: email, password });
         if (response.status === 200) {
-            localStorage.setItem('accessToken', response.data.accessToken);
-            localStorage.setItem('refreshToken', response.data.refreshToken);
             toast.success('Login Successful!');
             return response.data;
         }
