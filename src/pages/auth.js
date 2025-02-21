@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 import { loginUser, registerUser } from '../api/authApi';
-
+import '../../src/styles/auth.css'
 import { useContext } from 'react';
 import { AuthContext } from '../AuthContext';
 
@@ -78,15 +78,15 @@ const AuthForm = () => {
     };
 
     return (
-        <div className='container'>
-            <div className='form-container'>
-                <div className='form-toggle'>
+        <div className='auth-container'>
+            <div className='auth-form-container'>
+                <div className='auth-form-toggle'>
                     <button className={isLogin ? 'active' : ""} onClick={() => setIsLogin(true)}>Login</button>
                     <button className={!isLogin ? 'active' : ""} onClick={() => setIsLogin(false)}>Signup</button>
                 </div>
 
                 {isLogin ? (
-                    <div className='form'>
+                    <div className='auth-form'>
                         <h2>Login Form</h2>
                         <input
                             type='email'
@@ -107,7 +107,7 @@ const AuthForm = () => {
                         <p>Not a Member?<a href='#' onClick={() => setIsLogin(false)}> Signup now</a></p>
                     </div>
                 ) : (
-                    <div className='form'>
+                    <div className='auth-form'>
                         <h2>Signup Form</h2>
                         <input
                             type='email'

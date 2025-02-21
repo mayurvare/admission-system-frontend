@@ -1,0 +1,178 @@
+.adm-one div {
+    flex: 1;
+}
+
+.adm-input {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+
+h1 {
+    font-size: 22;
+    text-align: center;
+    color: #4206a3;
+}
+
+label {
+    font-size: 15px;
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    margin-bottom: 5px;
+    text-align: left;
+    color: rgb(42, 39, 39);
+    font-weight: bold;
+}
+
+.adm-input[type='radio'] {
+    display: inline-block;
+    width: 30px;
+    /* margin-right: 5px; */
+}
+
+select {
+    display: block;
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+textarea {
+    resize: none;
+    width: 98%;
+    min-height: 100px;
+    max-height: 150px;
+}
+
+.adm-container {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.2s;
+    width: 55vw;
+    /* 75% of screen width */
+    height: 100vh;
+    /* 100% of screen height */
+    text-align: center;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    /* Enables scrolling for the content */
+    margin-top: 250px;
+    margin-bottom: 30px;
+    /* Adjust this based on navbar height */
+}
+
+.adm-one {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    /* padding-bottom: 8px; */
+}
+
+
+.adm-hr {
+    border: none;
+    height: 1px;
+    background-color: #ddd;
+    width: 100%;
+}
+
+.radio-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding-top: 5px;
+}
+
+.adm-button {
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin: 15px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    background-color: #4206a3;
+    width: 30%;
+    font-size: 16px;
+
+}
+
+.adm-button:hover {
+    background-color: #2b036c;
+}
+
+@media screen and (max-width: 600px) {
+    .adm-container {
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        transition: transform 0.2s;
+        width: 80vw;
+        /* 75% of screen width */
+        height: 100vh;
+        /* 100% of screen height */
+        text-align: center;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+        /* Enables scrolling for the content */
+        margin-top: 250px;
+        margin-bottom: 30px;
+        /* Adjust this based on navbar height */
+    }
+
+    .adm-one {
+        display: flex;
+        flex-direction: column;
+        /* Stack inputs vertically */
+        gap: 10px;
+        /* Adds spacing between inputs */
+        width: 100%;
+        /* padding-bottom: 5px; */
+    }
+
+    .adm-one input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    .radio-group {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding-top: 5px;
+    }
+
+    .adm-button {
+        padding: 10px 15px;
+        border-radius: 6px;
+        margin: 15px;
+        border: none;
+        color: white;
+        cursor: pointer;
+        background-color: #4206a3;
+        width: 40%;
+        font-size: 16px;
+        flex: 1;
+    }
+
+    .adm-button:hover {
+        background-color: #2b036c;
+    }
+}

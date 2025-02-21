@@ -1,4 +1,4 @@
-/* body {
+body {
   font-family: Arial, sans-serif;
   display: flex;
   justify-content: center;
@@ -8,7 +8,7 @@
   background-color: #0C67A0;
 }
 
-.container {
+.auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -16,7 +16,7 @@
   width: 100%;
 }
 
-.form-container {
+.auth-form-container {
   background-color: white;
   padding: 20px;
   border-radius: 10px;
@@ -30,7 +30,7 @@
   margin-bottom: 20px;
 }
 
-.form-toggle button {
+.auth-form-toggle button {
   width: 50%;
   padding: 10px;
   background-color: #f3f3f3;
@@ -40,43 +40,43 @@
   border-radius: 10px 10px 0 0;
 }
 
-.form-toggle .active {
+.auth-form-toggle .active {
   background-color: #033452;
   color: white;
 }
 
-.form {
+.auth-form {
   display: flex;
   flex-direction: column;
 }
 
-.form h2 {
+.auth-form h2 {
   margin-bottom: 20px;
 }
 
-.form input {
+.auth-form input {
   padding: 10px;
   margin-bottom: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
 }
 
-.form button {
+.auth-form button {
   padding: 10px;
-  background-color:#033452;
+  background-color: #033452;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
-.form a {
+.auth-form a {
   color: #007bff;
   text-decoration: none;
   margin-bottom: 10px;
   text-align: right;
 }
 
-.form p {
+.auth-form p {
   text-align: center;
-} */
+}
