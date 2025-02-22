@@ -19,6 +19,8 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('redirect');
+    localStorage.removeItem('formData');
     setIsAuthenticated(false);
   };
 

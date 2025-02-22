@@ -23,14 +23,14 @@ const MainLayout = () => {
   const { isAuthenticated } = useContext(AuthContext);
   const location = useLocation();
   const hideNavbar = location.pathname === "/login"; // Hide navbar on login page
-
+  const redirectTo = localStorage.getItem('redirect') || '/';
   return (
     <>
       {!hideNavbar && <Navbar />}
       <ToastContainer />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <AuthForm />} />
+        <Route path="/login" element={isAuthenticated ? <Navigate to={redirectTo} replace /> : <AuthForm />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/Admission" element={<Admission />} />
 

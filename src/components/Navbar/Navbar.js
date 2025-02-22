@@ -1,6 +1,6 @@
-import React from 'react'
-import './Navbar.css'
-import logo from '../../../src/logo.svg'
+import React from 'react';
+import '../../../src/styles/Navbar.css';
+import logo from '../../../src/logo.svg';
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../../../src/AuthContext';

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 import { loginUser, registerUser } from '../api/authApi';
@@ -15,17 +15,11 @@ const AuthForm = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate(); // React Router navigation
     const { login } = useContext(AuthContext);
-    // ✅ Check if user is already logged in
-    // useEffect(() => {
-    //     const token = localStorage.getItem('accessToken');
-    //     if (token) {
-    //         navigate('/'); // Redirect to home if already logged in
-    //     }
-    // }, [navigate]);
 
     // Handle Login
     const handleLogin = async () => {
-
+        // console.log('Redirecting to:', redirectTo);
+        const redirectTo = localStorage.getItem('redirect') || '/'; // Go back to original page or home
         setLoading(true);
         if (!email || !password) {
             toast.error('Please enter email or password');
@@ -36,7 +30,8 @@ const AuthForm = () => {
         try {
             const response = await loginUser(email, password);
             login(response.accessToken);
-            navigate('/');
+            console.log(redirectTo);
+            navigate(redirectTo, { replace: true });
             setEmail('');
             setPassword('');
         } catch (err) {
@@ -60,16 +55,18 @@ const AuthForm = () => {
             toast.error('Please Enter Password');
         }
 
-
         setLoading(true);
 
         try {
-            await registerUser(email, password);
-            toast.success('Signup Successful! Please log in.');
+            const response = await registerUser(email, password);
+            console.log('AUth Response' + response.message);
             setEmail('');
             setPassword('');
             setConfirmPassword('');
-            setIsLogin(true);
+            if (response.message !== "Username already exists.") {
+                setIsLogin(true);
+            }
+
         } catch (err) {
             toast.error(err);
         } finally {
