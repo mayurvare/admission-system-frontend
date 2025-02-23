@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import '../../src/styles/admission.css'
 import { submitForm } from '../api/admissionApi';
+import { createOrder } from '../api/razorpay';
 import { toast } from 'react-toastify';
 import { useContext } from 'react';
 import { AuthContext } from '../../src/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { jsPDF } from "jspdf";
 
 const initialValues = {
     sfirstname: "",
@@ -67,6 +69,14 @@ const AdmissionForm = () => {
         }
     }, []); // Empty dependency array ensures it runs only once
 
+    useEffect(() => {
+        const script = document.createElement("script");
+        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+        script.async = true;
+        script.onload = () => console.log("Razorpay SDK Loaded");
+        document.body.appendChild(script);
+    }, []);
+
     const handleChanges = (e) => {
         const { name, value, type, files } = e.target;
 
@@ -104,7 +114,198 @@ const AdmissionForm = () => {
         </div>
     );
 
-    const handleReset = () => {
+    const downloadPdf = async (receiptId, trnId) => {
+        const userData = {
+            name: values.sfirstname,
+            email: values.email,
+            amountPaid: "₹100",
+            transactionId: trnId,
+            receiptId: receiptId,
+            collegeName: 'Shri P.L.Shroff College'
+        };
+
+        // Generate PDF
+        const doc = new jsPDF();
+        // Add College Name at the Top
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(18);
+        doc.text(userData.collegeName, 20, 20);
+
+        // Add Title
+        doc.setFontSize(14);
+        doc.text("Admission Payment Receipt", 20, 40);
+
+        // Add user details
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+        let y = 60; // Start at y=60 to avoid overlapping with title
+        const lineSpacing = 10; // Space between each line
+
+        doc.text(`Student Id: ${userData.receiptId}`, 20, y);
+        y += lineSpacing;
+        doc.text(`Name: ${userData.name}`, 20, y);
+        y += lineSpacing;
+        doc.text(`Email: ${userData.email}`, 20, y);
+        y += lineSpacing;
+        doc.text(`Amount Paid: ${userData.amountPaid}`, 20, y);
+        y += lineSpacing;
+        doc.text(`Transaction ID: ${userData.transactionId}`, 20, y);
+        y += lineSpacing * 2; // Extra space before footer
+
+        // Add Footer
+        doc.setFontSize(10);
+        doc.text("Thank you for your payment!", 20, y);
+        y += lineSpacing;
+        doc.text(`For any queries, contact ${userData.collegeName} Admission Office.`, 20, y);
+
+        // Add a new page for student details
+        doc.addPage();
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        doc.text("Student Information Form", 20, 20);
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+        let y2 = 40; // Start position for second page
+
+        // Personal Information
+        doc.setFont("helvetica", "bold");
+        doc.text("Personal Information", 20, y2);
+        y2 += lineSpacing;
+        doc.setFont("helvetica", "normal");
+        doc.text(`Full Name: ${values.sfirstname} ${values.smiddlename} ${values.slastname}`, 20, y2);
+        y2 += lineSpacing;
+        doc.text(`Email: ${values.email}`, 20, y2);
+        y2 += lineSpacing;
+        doc.text(`Contact: ${values.contact}`, 20, y2);
+        y2 += lineSpacing;
+        doc.text(`Gender: ${values.gender}`, 20, y2);
+        y2 += lineSpacing;
+        doc.text(`Date of Birth: ${values.dob}`, 20, y2);
+        y2 += lineSpacing;
+        doc.text(`Place of Birth: ${values.placeofbirth}`, 20, y2);
+        y2 += lineSpacing;
+        doc.text(`Religion: ${values.religion}`, 20, y2);
+        y2 += lineSpacing;
+        doc.text(`Aadhar No: ${values.aadhar}`, 20, y2);
+        y2 += lineSpacing * 2;
+
+        // Parent Details
+        doc.setFont("helvetica", "bold");
+        doc.text("Parent Details", 20, y2);
+        y2 += lineSpacing;
+        doc.setFont("helvetica", "normal");
+        doc.text(`Father: ${values.ffirstname} ${values.fmiddlename} ${values.flastname}`, 20, y2);
+        y2 += lineSpacing;
+        doc.text(`Mother: ${values.mfirstname} ${values.mmiddlename} ${values.mlastname}`, 20, y2);
+        y2 += lineSpacing * 2;
+
+        // Examination Details
+        doc.setFont("helvetica", "bold");
+        doc.text("Examination Details", 20, y2);
+        y2 += lineSpacing;
+        doc.setFont("helvetica", "normal");
+
+        doc.text(`SSC - Board: ${values.board}, Marks: ${values.marks}/${values.outOf}`, 20, y2);
+        y2 += lineSpacing;
+        doc.text(`School Name: ${values.schoolName}, Year: ${values.passingYear}`, 20, y2);
+        y2 += lineSpacing;
+        doc.text(`HSC - Board: ${values.hboard}, Marks: ${values.hmarks}/${values.houtOf}`, 20, y2);
+        y2 += lineSpacing;
+        doc.text(`College Name: ${values.hschoolName}, Year: ${values.hpassingYear}`, 20, y2);
+        y2 += lineSpacing * 2;
+
+        // Save and Download PDF
+        doc.save(`${userData.name}_Admission_Receipt.pdf`);
+    }
+
+
+
+    const razorPayRes = async () => {
+        const formData = {
+            "firstname": values.sfirstname,
+            "middlename": values.smiddlename,
+            "lastname": values.slastname,
+            "email": values.email,
+            "contact": values.contact,
+            "gender": values.gender,
+            "address": values.address,
+            "dob": values.dob,
+            "place_of_birth": values.placeofbirth,
+            "religion": values.religion,
+            "aadhar": values.aadhar,
+            "father": {
+                "firstname": values.ffirstname,
+                "middlename": values.fmiddlename,
+                "lastname": values.flastname
+            },
+            "mother": {
+                "firstname": values.mfirstname,
+                "middlename": values.mmiddlename,
+                "lastname": values.mlastname
+            },
+            "examination_details": {
+                "ssc": {
+                    "board": values.board,
+                    "cert_no": values.certNo,
+                    "seat_no": values.seatNo,
+                    "marks": values.marks,
+                    "out_of": values.outOf,
+                    "passingYear": values.passingYear,
+                    "school_name": values.schoolName,
+                    "isQualified": values.qualified === 'Yes' ? true : false
+                },
+                "hsc": {
+                    "board": values.hboard,
+                    "cert_no": values.hcertNo,
+                    "seat_no": values.hseatNo,
+                    "marks": values.hmarks,
+                    "out_of": values.houtOf,
+                    "passingYear": values.hpassingYear,
+                    "school_name": values.hschoolName,
+                    "isQualified": values.hqualified === 'Yes' ? true : false
+
+                }
+            }
+
+        };
+        const orderData = await createOrder(10000, values.aadhar.slice(-4));
+        console.log(orderData.order.id);
+        const options = {
+            key: "rzp_test_HunzwROOPkKw4u", // Replace with your Razorpay Key ID
+            amount: orderData.order.amount,
+            currency: "INR",
+            name: "Your Company",
+            description: "Test Transaction",
+            order_id: orderData.order.id,
+            handler: async function (response) {
+                alert("Payment Successful!");
+                console.log(response); const formResponse = await submitForm(formData);
+                if (formResponse.message === "Admission Form Submitted Successfully") {
+                    downloadPdf(orderData.order.receipt, orderData.order.id);
+                    localStorage.removeItem('redirect'); // Clear redirect path
+                    localStorage.removeItem('formData'); // Clear form data after login
+                    handleReset();
+                }
+                console.log(response);
+            },
+            prefill: {
+                name: values.sfirstname,
+                email: values.email,
+                contact: values.contact,
+            },
+            theme: {
+                color: "#3399cc",
+            },
+        };
+
+        const razorpay = new window.Razorpay(options);
+        razorpay.open();
+    }
+
+    const handleReset = async () => {
+        // razorPayRes();
+        // downloadPdf(9545);
         setValues(initialValues);
         setFormKey(Date.now());
     };
@@ -116,61 +317,7 @@ const AdmissionForm = () => {
             setLoading(true);
             try {
                 console.log(values.qualified);
-                const formData = {
-                    "firstname": values.sfirstname,
-                    "middlename": values.smiddlename,
-                    "lastname": values.slastname,
-                    "email": values.email,
-                    "contact": values.contact,
-                    "gender": values.gender,
-                    "address": values.address,
-                    "dob": values.dob,
-                    "place_of_birth": values.placeofbirth,
-                    "religion": values.religion,
-                    "aadhar": values.aadhar,
-                    "father": {
-                        "firstname": values.ffirstname,
-                        "middlename": values.fmiddlename,
-                        "lastname": values.flastname
-                    },
-                    "mother": {
-                        "firstname": values.mfirstname,
-                        "middlename": values.mmiddlename,
-                        "lastname": values.mlastname
-                    },
-                    "examination_details": {
-                        "ssc": {
-                            "board": values.board,
-                            "cert_no": values.certNo,
-                            "seat_no": values.seatNo,
-                            "marks": values.marks,
-                            "out_of": values.outOf,
-                            "passingYear": values.passingYear,
-                            "school_name": values.schoolName,
-                            "isQualified": values.qualified === 'Yes' ? true : false
-                        },
-                        "hsc": {
-                            "board": values.hboard,
-                            "cert_no": values.hcertNo,
-                            "seat_no": values.hseatNo,
-                            "marks": values.hmarks,
-                            "out_of": values.houtOf,
-                            "passingYear": values.hpassingYear,
-                            "school_name": values.hschoolName,
-                            "isQualified": values.hqualified === 'Yes' ? true : false
-
-                        }
-                    }
-
-                };
-
-                const response = await submitForm(formData);
-                if (response.message === "Form Submitted successfully.") {
-                    localStorage.removeItem('redirect'); // Clear redirect path
-                    localStorage.removeItem('formData'); // Clear form data after login
-                    handleReset();
-                }
-                console.log(response);
+                razorPayRes();
             } catch (err) {
                 toast.error(err);
             } finally {
@@ -404,7 +551,7 @@ const AdmissionForm = () => {
 
                 <div className='button-container'>
                     <button className='adm-button' type='button' onClick={handleReset}>Reset</button>
-                    <button className='adm-button' type='submit'>{loading ? 'please wait...' : 'Submit'}</button>
+                    <button className='adm-button' type='submit'>{loading ? 'please wait...' : 'Pay & Submit'}</button>
                 </div>
 
 

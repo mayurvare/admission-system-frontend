@@ -5,6 +5,7 @@ import AboutUs from './pages/about';
 import AuthForm from './pages/auth';
 import Home from './pages/home';
 import Admission from './pages/Admission';
+import Contact from './pages/contact';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { useContext } from 'react';
@@ -33,6 +34,7 @@ const MainLayout = () => {
         <Route path="/login" element={isAuthenticated ? <Navigate to={redirectTo} replace /> : <AuthForm />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/Admission" element={<Admission />} />
+        <Route path="/Contact" element={<Contact />} />
 
         {/* default redirect to home page */}
         <Route path="*" element={<Navigate to="/" replace />} />

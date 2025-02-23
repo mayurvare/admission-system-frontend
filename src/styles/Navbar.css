@@ -17,17 +17,17 @@
     height: 40px;
 }
 
-.navbar ul {
+/* Desktop Navigation */
+.nav-links {
     display: flex;
     align-items: center;
-    /* Aligns list items vertically */
     gap: 20px;
     list-style: none;
-    margin: 0;
+    margin-right: 40px;
     padding: 0;
 }
 
-.navbar ul li {
+.nav-links li {
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
@@ -44,23 +44,91 @@
     white-space: nowrap;
 }
 
-.navbar ul button {
-    margin-right: 40px;
-}
-
-/* Hover effect for button */
 .navbar button:hover {
     background-color: #0056b3;
 }
 
-.navbar button a {
-    color: white; /* Change button text color */
-    text-decoration: none; /* Remove underline */
+.nav-links button {
+    margin-left: 20px;
 }
 
-/* Ensure navbar items are properly spaced */
-.navbar ul li,
-.navbar ul button {
+/* Hamburger Menu (Hidden by Default) */
+.menu-icon {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Drawer Menu for Small Screens */
+.drawer {
+    position: fixed;
+    top: 0;
+    right: -250px;
+    /* Hidden by default */
+    width: 250px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+    transition: right 0.3s ease-in-out;
+    padding-top: 60px;
     display: flex;
+    flex-direction: column;
     align-items: center;
+    z-index: 1100;
+}
+
+.drawer.open {
+    right: 0;
+}
+
+.drawer ul {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+    width: 100%;
+}
+
+.drawer ul li {
+    padding: 15px;
+    font-size: 18px;
+}
+
+.drawer button {
+    margin-top: 20px;
+    width: 80%;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Overlay */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+/* Hide desktop menu and show hamburger on small screens */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+
+    .menu-icon {
+        display: block;
+        margin-right: 40px;
+    }
 }
