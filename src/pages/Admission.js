@@ -7,6 +7,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../../src/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const initialValues = {
     sfirstname: "",
@@ -114,6 +115,112 @@ const AdmissionForm = () => {
         </div>
     );
 
+    // const downloadPdf = async (receiptId, trnId) => {
+    //     const userData = {
+    //         name: values.sfirstname,
+    //         email: values.email,
+    //         amountPaid: "₹100",
+    //         transactionId: trnId,
+    //         receiptId: receiptId,
+    //         collegeName: 'Shri P.L.Shroff College'
+    //     };
+
+    //     // Generate PDF
+    //     const doc = new jsPDF();
+    //     // Add College Name at the Top
+    //     doc.setFont("helvetica", "bold");
+    //     doc.setFontSize(18);
+    //     doc.text(userData.collegeName, 20, 20);
+
+    //     // Add Title
+    //     doc.setFontSize(14);
+    //     doc.text("Admission Payment Receipt", 20, 40);
+
+    //     // Add user details
+    //     doc.setFont("helvetica", "normal");
+    //     doc.setFontSize(12);
+    //     let y = 60; // Start at y=60 to avoid overlapping with title
+    //     const lineSpacing = 10; // Space between each line
+
+    //     doc.text(`Student Id: ${userData.receiptId}`, 20, y);
+    //     y += lineSpacing;
+    //     doc.text(`Name: ${userData.name}`, 20, y);
+    //     y += lineSpacing;
+    //     doc.text(`Email: ${userData.email}`, 20, y);
+    //     y += lineSpacing;
+    //     doc.text(`Amount Paid: ${userData.amountPaid}`, 20, y);
+    //     y += lineSpacing;
+    //     doc.text(`Transaction ID: ${userData.transactionId}`, 20, y);
+    //     y += lineSpacing * 2; // Extra space before footer
+
+    //     // Add Footer
+    //     doc.setFontSize(10);
+    //     doc.text("Thank you for your payment!", 20, y);
+    //     y += lineSpacing;
+    //     doc.text(`For any queries, contact ${userData.collegeName} Admission Office.`, 20, y);
+
+    //     // Add a new page for student details
+    //     doc.addPage();
+    //     doc.setFont("helvetica", "bold");
+    //     doc.setFontSize(16);
+    //     doc.text("Student Information Form", 20, 20);
+
+    //     doc.setFont("helvetica", "normal");
+    //     doc.setFontSize(12);
+    //     let y2 = 40; // Start position for second page
+
+    //     // Personal Information
+    //     doc.setFont("helvetica", "bold");
+    //     doc.text("Personal Information", 20, y2);
+    //     y2 += lineSpacing;
+    //     doc.setFont("helvetica", "normal");
+    //     doc.text(`Full Name: ${values.sfirstname} ${values.smiddlename} ${values.slastname}`, 20, y2);
+    //     y2 += lineSpacing;
+    //     doc.text(`Email: ${values.email}`, 20, y2);
+    //     y2 += lineSpacing;
+    //     doc.text(`Contact: ${values.contact}`, 20, y2);
+    //     y2 += lineSpacing;
+    //     doc.text(`Gender: ${values.gender}`, 20, y2);
+    //     y2 += lineSpacing;
+    //     doc.text(`Date of Birth: ${values.dob}`, 20, y2);
+    //     y2 += lineSpacing;
+    //     doc.text(`Place of Birth: ${values.placeofbirth}`, 20, y2);
+    //     y2 += lineSpacing;
+    //     doc.text(`Religion: ${values.religion}`, 20, y2);
+    //     y2 += lineSpacing;
+    //     doc.text(`Aadhar No: ${values.aadhar}`, 20, y2);
+    //     y2 += lineSpacing * 2;
+
+    //     // Parent Details
+    //     doc.setFont("helvetica", "bold");
+    //     doc.text("Parent Details", 20, y2);
+    //     y2 += lineSpacing;
+    //     doc.setFont("helvetica", "normal");
+    //     doc.text(`Father: ${values.ffirstname} ${values.fmiddlename} ${values.flastname}`, 20, y2);
+    //     y2 += lineSpacing;
+    //     doc.text(`Mother: ${values.mfirstname} ${values.mmiddlename} ${values.mlastname}`, 20, y2);
+    //     y2 += lineSpacing * 2;
+
+    //     // Examination Details
+    //     doc.setFont("helvetica", "bold");
+    //     doc.text("Examination Details", 20, y2);
+    //     y2 += lineSpacing;
+    //     doc.setFont("helvetica", "normal");
+
+    //     doc.text(`SSC - Board: ${values.board}, Marks: ${values.marks}/${values.outOf}`, 20, y2);
+    //     y2 += lineSpacing;
+    //     doc.text(`School Name: ${values.schoolName}, Year: ${values.passingYear}`, 20, y2);
+    //     y2 += lineSpacing;
+    //     doc.text(`HSC - Board: ${values.hboard}, Marks: ${values.hmarks}/${values.houtOf}`, 20, y2);
+    //     y2 += lineSpacing;
+    //     doc.text(`College Name: ${values.hschoolName}, Year: ${values.hpassingYear}`, 20, y2);
+    //     y2 += lineSpacing * 2;
+
+    //     // Save and Download PDF
+    //     doc.save(`${userData.name}_Admission_Receipt.pdf`);
+    // }
+
+    
     const downloadPdf = async (receiptId, trnId) => {
         const userData = {
             name: values.sfirstname,
@@ -123,103 +230,90 @@ const AdmissionForm = () => {
             receiptId: receiptId,
             collegeName: 'Shri P.L.Shroff College'
         };
-
+    
         // Generate PDF
         const doc = new jsPDF();
-        // Add College Name at the Top
+        
+        // Add College Name and Title
         doc.setFont("helvetica", "bold");
         doc.setFontSize(18);
         doc.text(userData.collegeName, 20, 20);
-
-        // Add Title
         doc.setFontSize(14);
         doc.text("Admission Payment Receipt", 20, 40);
-
-        // Add user details
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(12);
-        let y = 60; // Start at y=60 to avoid overlapping with title
-        const lineSpacing = 10; // Space between each line
-
-        doc.text(`Student Id: ${userData.receiptId}`, 20, y);
-        y += lineSpacing;
-        doc.text(`Name: ${userData.name}`, 20, y);
-        y += lineSpacing;
-        doc.text(`Email: ${userData.email}`, 20, y);
-        y += lineSpacing;
-        doc.text(`Amount Paid: ${userData.amountPaid}`, 20, y);
-        y += lineSpacing;
-        doc.text(`Transaction ID: ${userData.transactionId}`, 20, y);
-        y += lineSpacing * 2; // Extra space before footer
-
+    
+        // Student Details Table
+        autoTable(doc, {
+            startY: 50,
+            head: [["Field", "Details"]],
+            body: [
+                ["Student Id", userData.receiptId],
+                ["Name", userData.name],
+                ["Email", userData.email],
+                ["Amount Paid", userData.amountPaid],
+                ["Transaction ID", userData.transactionId],
+            ],
+            theme: 'grid'
+        });
+    
+        let finalY = doc.lastAutoTable.finalY + 10;
+    
         // Add Footer
         doc.setFontSize(10);
-        doc.text("Thank you for your payment!", 20, y);
-        y += lineSpacing;
-        doc.text(`For any queries, contact ${userData.collegeName} Admission Office.`, 20, y);
-
-        // Add a new page for student details
+        doc.text("Thank you for your payment!", 20, finalY);
+        doc.text(`For any queries, contact ${userData.collegeName} Admission Office.`, 20, finalY + 10);
+    
+        // New Page for Student Information
         doc.addPage();
         doc.setFont("helvetica", "bold");
         doc.setFontSize(16);
         doc.text("Student Information Form", 20, 20);
-
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(12);
-        let y2 = 40; // Start position for second page
-
-        // Personal Information
-        doc.setFont("helvetica", "bold");
-        doc.text("Personal Information", 20, y2);
-        y2 += lineSpacing;
-        doc.setFont("helvetica", "normal");
-        doc.text(`Full Name: ${values.sfirstname} ${values.smiddlename} ${values.slastname}`, 20, y2);
-        y2 += lineSpacing;
-        doc.text(`Email: ${values.email}`, 20, y2);
-        y2 += lineSpacing;
-        doc.text(`Contact: ${values.contact}`, 20, y2);
-        y2 += lineSpacing;
-        doc.text(`Gender: ${values.gender}`, 20, y2);
-        y2 += lineSpacing;
-        doc.text(`Date of Birth: ${values.dob}`, 20, y2);
-        y2 += lineSpacing;
-        doc.text(`Place of Birth: ${values.placeofbirth}`, 20, y2);
-        y2 += lineSpacing;
-        doc.text(`Religion: ${values.religion}`, 20, y2);
-        y2 += lineSpacing;
-        doc.text(`Aadhar No: ${values.aadhar}`, 20, y2);
-        y2 += lineSpacing * 2;
-
-        // Parent Details
-        doc.setFont("helvetica", "bold");
-        doc.text("Parent Details", 20, y2);
-        y2 += lineSpacing;
-        doc.setFont("helvetica", "normal");
-        doc.text(`Father: ${values.ffirstname} ${values.fmiddlename} ${values.flastname}`, 20, y2);
-        y2 += lineSpacing;
-        doc.text(`Mother: ${values.mfirstname} ${values.mmiddlename} ${values.mlastname}`, 20, y2);
-        y2 += lineSpacing * 2;
-
-        // Examination Details
-        doc.setFont("helvetica", "bold");
-        doc.text("Examination Details", 20, y2);
-        y2 += lineSpacing;
-        doc.setFont("helvetica", "normal");
-
-        doc.text(`SSC - Board: ${values.board}, Marks: ${values.marks}/${values.outOf}`, 20, y2);
-        y2 += lineSpacing;
-        doc.text(`School Name: ${values.schoolName}, Year: ${values.passingYear}`, 20, y2);
-        y2 += lineSpacing;
-        doc.text(`HSC - Board: ${values.hboard}, Marks: ${values.hmarks}/${values.houtOf}`, 20, y2);
-        y2 += lineSpacing;
-        doc.text(`College Name: ${values.hschoolName}, Year: ${values.hpassingYear}`, 20, y2);
-        y2 += lineSpacing * 2;
-
+    
+        // Personal Information Table
+        autoTable(doc, {
+            startY: 30,
+            head: [["Field", "Details"]],
+            body: [
+                ["Full Name", `${values.sfirstname} ${values.smiddlename} ${values.slastname}`],
+                ["Email", values.email],
+                ["Contact", values.contact],
+                ["Gender", values.gender],
+                ["Date of Birth", values.dob],
+                ["Place of Birth", values.placeofbirth],
+                ["Religion", values.religion],
+                ["Aadhar No", values.aadhar],
+            ],
+            theme: 'grid'
+        });
+    
+        finalY = doc.lastAutoTable.finalY + 10;
+    
+        // Parent Details Table
+        autoTable(doc, {
+            startY: finalY,
+            head: [["Parent", "First Name", "Middle Name", "Last Name"]],
+            body: [
+                ["Father", values.ffirstname, values.fmiddlename, values.flastname],
+                ["Mother", values.mfirstname, values.mmiddlename, values.mlastname]
+            ],
+            theme: 'grid'
+        });
+    
+        finalY = doc.lastAutoTable.finalY + 10;
+    
+        // Examination Details Table
+        autoTable(doc, {
+            startY: finalY,
+            head: [["Exam", "Board", "Marks Obtained", "Out of", "Passing Year", "School/College Name"]],
+            body: [
+                ["SSC", values.board, values.marks, values.outOf, values.passingYear, values.schoolName],
+                ["HSC", values.hboard, values.hmarks, values.houtOf, values.hpassingYear, values.hschoolName]
+            ],
+            theme: 'grid'
+        });
+    
         // Save and Download PDF
         doc.save(`${userData.name}_Admission_Receipt.pdf`);
-    }
-
-
+    };
 
     const razorPayRes = async () => {
         const formData = {
