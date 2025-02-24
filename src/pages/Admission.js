@@ -9,6 +9,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 
+
 const initialValues = {
     sfirstname: "",
     smiddlename: "",
