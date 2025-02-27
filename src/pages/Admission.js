@@ -8,6 +8,7 @@ import { AuthContext } from '../../src/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
+import emailjs from "emailjs-com";
 
 
 const initialValues = {
@@ -116,6 +117,25 @@ const AdmissionForm = () => {
         </div>
     );
 
+
+    // const renderFileInput = (label, name, placeholder) => (
+    //     <div>
+    //         <label htmlFor={name}>{label}*</label>
+    //         <input
+    //             className="adm-input"
+    //             type="file"
+    //             placeholder={placeholder}
+    //             name={name}
+    //             onChange={handleChanges}
+    //             accept="image/*" // Specify the types of files that can be uploaded
+    //             required
+    //         />
+    //     </div>
+    // );
+
+
+
+
     // const downloadPdf = async (receiptId, trnId) => {
     //     const userData = {
     //         name: values.sfirstname,
@@ -221,7 +241,7 @@ const AdmissionForm = () => {
     //     doc.save(`${userData.name}_Admission_Receipt.pdf`);
     // }
 
-    
+
     const downloadPdf = async (receiptId, trnId) => {
         const userData = {
             name: values.sfirstname,
@@ -231,17 +251,17 @@ const AdmissionForm = () => {
             receiptId: receiptId,
             collegeName: 'Shri P.L.Shroff College'
         };
-    
+
         // Generate PDF
         const doc = new jsPDF();
-        
+
         // Add College Name and Title
         doc.setFont("helvetica", "bold");
         doc.setFontSize(18);
         doc.text(userData.collegeName, 20, 20);
         doc.setFontSize(14);
         doc.text("Admission Payment Receipt", 20, 40);
-    
+
         // Student Details Table
         autoTable(doc, {
             startY: 50,
@@ -255,20 +275,20 @@ const AdmissionForm = () => {
             ],
             theme: 'grid'
         });
-    
+
         let finalY = doc.lastAutoTable.finalY + 10;
-    
+
         // Add Footer
         doc.setFontSize(10);
         doc.text("Thank you for your payment!", 20, finalY);
         doc.text(`For any queries, contact ${userData.collegeName} Admission Office.`, 20, finalY + 10);
-    
+
         // New Page for Student Information
         doc.addPage();
         doc.setFont("helvetica", "bold");
         doc.setFontSize(16);
         doc.text("Student Information Form", 20, 20);
-    
+
         // Personal Information Table
         autoTable(doc, {
             startY: 30,
@@ -285,9 +305,9 @@ const AdmissionForm = () => {
             ],
             theme: 'grid'
         });
-    
+
         finalY = doc.lastAutoTable.finalY + 10;
-    
+
         // Parent Details Table
         autoTable(doc, {
             startY: finalY,
@@ -298,9 +318,9 @@ const AdmissionForm = () => {
             ],
             theme: 'grid'
         });
-    
+
         finalY = doc.lastAutoTable.finalY + 10;
-    
+
         // Examination Details Table
         autoTable(doc, {
             startY: finalY,
@@ -311,10 +331,47 @@ const AdmissionForm = () => {
             ],
             theme: 'grid'
         });
-    
+
         // Save and Download PDF
         doc.save(`${userData.name}_Admission_Receipt.pdf`);
+        // Send the PDF via Email
+    sendPdfByEmail(doc, userData.email);
     };
+
+    const sendPdfByEmail = (doc, recipientEmail) => {
+        // Convert PDF to Blob
+        const pdfBlob = doc.output("blob");
+    
+        // Convert Blob to Base64
+        const reader = new FileReader();
+        reader.readAsDataURL(pdfBlob);
+        reader.onloadend = () => {
+            const base64PDF = reader.result.split(",")[1]; // Remove data prefix
+    
+            const templateParams = {
+                to_email: recipientEmail, // Dynamic recipient email
+                from_name: "Shri P.L.Shroff College",
+                message: "Please find the attached Admission Receipt PDF.",
+                pdf_attachment: base64PDF, // Attach PDF as Base64
+            };
+    
+            emailjs.send(
+                "service_chasq3s", // Replace with your EmailJS Service ID
+                "template_scq1592", // Replace with your EmailJS Template ID
+                templateParams,
+                "DKgOz2sH9Pa5it4_Y" // Replace with your EmailJS User ID
+            )
+            .then((response) => {
+                console.log("Email sent successfully!", response.status, response.text);
+                alert("Email Sent!");
+            })
+            .catch((error) => {
+                console.error("Failed to send email.", error);
+                alert("Email Failed!");
+            });
+        };
+    };
+
 
     const razorPayRes = async () => {
         const formData = {
@@ -586,6 +643,9 @@ const AdmissionForm = () => {
                         </select>
                     </div>
                 </div>
+                {/* <div>
+                        {renderFileInput("Upload Image", 'result', "Upload an Image")}
+                    </div> */}
 
                 <label>HSC</label>
                 <div className='adm-one'>
@@ -643,6 +703,9 @@ const AdmissionForm = () => {
                         </select>
                     </div>
                 </div>
+                {/* <div>
+                        {renderFileInput("Upload Image", 'hresult', "Upload an Image")}
+                    </div> */}
 
                 <div className='button-container'>
                     <button className='adm-button' type='button' onClick={handleReset}>Reset</button>
