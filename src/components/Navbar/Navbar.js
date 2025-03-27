@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../../../src/AuthContext';
 import logo from '../../../src/logo.svg';
+import logo1 from '../../../src/logo1.png';
 import '../../../src/styles/Navbar.css';
 import { FaBars, FaTimes } from 'react-icons/fa';
 
@@ -19,7 +20,8 @@ const Navbar = () => {
     return (
         <>
             <div className="navbar">
-                <img src={logo} alt="Logo" className="logo" />
+                
+                <img src={logo1} alt="Logo" className="logo" />
                 
                 {/* Desktop Menu */}
                 <ul className="nav-links">
